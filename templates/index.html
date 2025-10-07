@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page Summarizer — Paste a URL. Get the gist—fast.</title>
+  <meta name="description" content="Page Summarizer fetches a webpage, extracts the main content, and generates a concise summary using a local AI model.">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React + ReactDOM via CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="min-h-screen bg-gray-100">
+  <header class="max-w-4xl mx-auto px-4 pt-10">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900">Page Summarizer</h1>
+    <p class="text-gray-600 mt-2">Paste a URL. Get the gist—fast.</p>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <div id="root"></div>
+  </main>
+
+  <footer class="max-w-4xl mx-auto px-4 pb-10 text-sm text-gray-500">
+    <p>Runs locally with a lightweight AI summarizer.</p>
+  </footer>
+
+  <script type="text/babel">
+    function App() {
+      const [url, setUrl] = React.useState("");
+      const [message, setMessage] = React.useState("");
+      const [error, setError] = React.useState("");
+      const [loading, setLoading] = React.useState(false);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage(""); setError(""); setLoading(true);
+        try {
+          const res = await fetch("/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            setError(data.error || "Request failed.");
+          } else {
+            setMessage(data.message);
+          }
+        } catch (e) {
+          setError("Network error.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="bg-white rounded-2xl shadow p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <label className="block">
+              <span className="text-sm font-medium text-gray-700">URL</span>
+              <input
+                type="url"
+                required
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com/article"
+                className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </label>
+            <button
+              type="submit"
+              className="w-full rounded-xl px-4 py-2 font-semibold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
+              disabled={loading}
+            >
+              {loading ? "Summarizing..." : "Summarize"}
+            </button>
+          </form>
+
+          {error && (
+            <div className="rounded-xl bg-red-50 text-red-700 px-4 py-3">{error}</div>
+          )}
+          {message && (
+            <article className="prose max-w-none">
+              <h2 className="text-xl font-semibold">Summary</h2>
+              <p className="whitespace-pre-wrap text-gray-900">{message}</p>
+            </article>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>

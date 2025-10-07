@@ -1,0 +1,15 @@
+.git
+.venv
+venv
+env
+__pycache__
+*.pyc
+node_modules
+models
+huggingface
+transformers_cache
+hf_cache
+*.bin
+*.pt
+*.safetensors
+.DS_Store
