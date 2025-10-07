@@ -69,21 +69,26 @@ You can build and run Page Summarizer in a container without installing Python l
 
 1. Build the image
 
+```sh
 docker build -t page-summarizer .
+```
 
 (Make sure you’re in the project root where the Dockerfile is.)
 
 2. Run the container
 
+```sh
 docker run -p 5000:5000 \
  --env-file .env \
  -v "$(pwd)/models:/app/models" \
  page-summarizer
+```
 
-Explanation:
-• -p 5000:5000 — exposes the app on http://localhost:5000
-• --env-file .env — loads your environment variables (like HF_LOCAL_PATH)
-• -v "$(pwd)/models:/app/models" — mounts your local model directory for faster startup and offline use
-• page-summarizer — the image name built above
+Explanation
+
+    • -p 5000:5000 — exposes the app on http://localhost:5000
+    • --env-file .env — loads your environment variables (like HF_LOCAL_PATH)
+    • -v "$(pwd)/models:/app/models" — mounts your local model directory for faster startup and offline use
+    • page-summarizer — the image name built above
 
 If you haven’t downloaded the model yet, the container will fetch it the first time (it can take a minute).
