@@ -16,7 +16,7 @@ Page Summarizer fetches a webpage, extracts its main content, and generates a co
 > **Python 3.10+** is recommended. Use a virtual environment.
 
 ```bash
-git clone <this-repo>
+git clone git@github.com:timokoenig/page-summarizer.git
 cd page-summarizer
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
